@@ -1,0 +1,23 @@
+{
+  "name": "bc_app-forge_collabflow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Harry06-X/BC_APP-FORGE_Collabflow.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Harry06-X/BC_APP-FORGE_Collabflow/issues"
+  },
+  "homepage": "https://github.com/Harry06-X/BC_APP-FORGE_Collabflow#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
