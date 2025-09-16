@@ -1,72 +1,54 @@
-const mongoose = require('mongoose');
 const Project = require('../models/project.model');
 
-mongoose.connect('mongodb://127.0.0.1:27017/miniProjet')
-.then(() => console.log("Connected to MongoDB"))
-.catch(error => console.error('Connexion Error MongoDB :', error));
-
-const [,, command, ...args] = process.argv;
-
-async function addProject(title, description) {
-    const project = new Project({title, description});
-    await project.save();
-    console.log("Project added:", project);
-}
-
-async function listProject() {
-    const projects = await Project.find();
-
-    if (projects.length === 0) {
-       console.log("No project added");
-       return;
-    }
-    console.log("Project liste's:"/* + projects*/);
-    projects.forEach(p => {
-        console.log(`- ${p.title} [${p.description}]`);
-    });
-}
-
-async function updateProject(id, newTitle, newStatus) {
-    const project = await Project.findByIdAndUpdate(
-        id,
-        {title: newTitle, status: newStatus},
-        {new: true}
-    );
-    consol.log("Project Updated:", project);
-}
-
-async function deleteProject(title) {
-    const result = await Project.findOneAndDelete( {title: title});
-    if (result) {
-        console.log(`Project "${title}" deleted`);
-    } else {
-        console.log(`No project found with the title "${title}".`);
-    }
-}
-
-async function runProject() {
+async function addProject(req, res) {
     try {
-        if (command === 'add') {
-            const [title, description] = args;
-            await addProject(title, description);
-        } else if (command === 'list') {
-            await listProject();
-        } else if (command === 'update') {
-            const [id, newTitle, newStatus] = args;
-            await updateProject(id, newTitle, newStatus);
-        } else if (command === 'delete') {
-            const [title] = args;
-            await deleteProject(title);
-        } else {
-            console.log("Commande inconnue");
-        }
+        const {title, description} = req.body;
+        const project = new Project({title, description});
+        await project.save();
+        res.status(201).json({message: "Project added:", project});
     } catch (error) {
-        console.error("Erreur:", error.message);
-    } finally {
-        mongoose.connection.close();
+        res.status(500).json({message: "Error adding project", error: error.message});
     }
 }
 
-runProject();
+async function listProjects(req, res) {
+    try {
+        const projects = await Project.find();
+        res.json(projects);
+    } catch (error) {
+        res.status(500).json({message: "Error fetching projects", error: error.message});
+    }
+}
 
-module.exports = runProject();
+async function updateProject(req, res) {
+    try {
+        const {id} = req.params;
+        const {title, description} = req.body;
+        const project = await Project.findByIdAndUpdate(
+            id,
+            {title, description},
+            {new: true}
+        );
+        if (!project) {
+            return res.status(404).json({message: "Project not found"});
+        }
+        res.json({message: "Project updated", project});
+    } catch (error) {
+        res.status(500).json({message: "Error updating project", error: error.message});
+    }
+}
+
+async function deleteProject(req, res) {
+    try {
+        const {id} = req.params;
+        const project = await Project.findByIdAndDelete(id);
+        if (!project) {
+            return res.status(404).json({message: "Project not found"});
+        }
+        res.json({message: `Project '${project.title}' deleted`});
+    } catch (error) {
+        res.status(500).json({message: "Error deleting project", error: error.message});
+    }
+}
+
+module.exports = {addProject, listProjects, updateProject, deleteProject};
