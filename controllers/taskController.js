@@ -1,24 +1,66 @@
+const Project = require('../models/project.model');
 const Task = require('../models/task.model');
 
 async function addTask(req, res) {
     try {
-        const { title, description, status, priority } = req.body;
-        const task = new Task({ title, description, status, priority });
-        await task.save();
-        res.status(201).json({ message: "Task added:", task });
+        const { projectId } = req.params;
+        const { title, description, status, priority, dueDate } = req.body;
+
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+        const task = new Task({
+            title,
+            description,
+            status,
+            priority,
+            dueDate,
+            project: projectId
+        });
+
+        await task.save(); 
+        res.status(201).json({ message: "Task added to project", task });
     } catch (error) {
         res.status(500).json({ message: "Error adding task", error: error.message });
     }
 }
 
-async function listTasks(req, res) {
+async function listTasksByProject(req, res) {
     try {
-        const tasks = await Task.find();
+        const { projectId } = req.params;
+        const tasks = await Task.find({ project: projectId });
         res.json(tasks);
     } catch (error) {
         res.status(500).json({ message: "Error fetching tasks", error: error.message });
     }
 }
+
+async function listTasks(req, res) {
+    try {
+        const { status, priority, sortBy, order, projectId } = req.query;
+
+        let filter = {};
+        if (status)
+            filter.status = status;
+        if (priority)
+            filter.priority = priority;
+        if (projectId)
+            filter.project = projectId;
+
+        let sortOptions = {};
+        if (sortBy)
+            sortOptions[sortBy] = order === "desc" ? - 1 : 1;
+
+        //const { projectId } = req.params;
+        // const tasks = await Task.find({ project: projectId });
+        const tasks = await Task.find(filter).sort(sortOptions);
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching tasks", error: error.message });
+    }
+}
+
 
 async function updateTask(req, res) {
     try {
@@ -51,4 +93,4 @@ async function deleteTask(req, res) {
     }
 }
 
-module.exports = {addTask, listTasks, updateTask, deleteTask};
+module.exports = {addTask, listTasks, listTasksByProject, updateTask, deleteTask};
