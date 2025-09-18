@@ -1,4 +1,5 @@
 const Project = require('../models/project.model');
+const Task = require('../models/task.model');
 
 async function addProject(req, res) {
     try {
@@ -18,6 +19,20 @@ async function listProjects(req, res) {
     } catch (error) {
         res.status(500).json({message: "Error fetching projects", error: error.message});
     }
+}
+
+async function getProjectWithTasks(req, res) {
+    try {
+        const { id } = req.params;
+        const project = await Project.findById(id);
+        if (!project)
+            return res.status(404).json({message: "Project not found"});
+        const tasks = await Task.find({ project: id });
+        res.json({ ...project.toObject(), tasks });
+    } catch(error) {
+        res.status(500).json({message: "Error fetching projects", error: error.message});
+    }
+
 }
 
 async function updateProject(req, res) {
@@ -45,10 +60,17 @@ async function deleteProject(req, res) {
         if (!project) {
             return res.status(404).json({message: "Project not found"});
         }
-        res.json({message: `Project '${project.title}' deleted`});
+        await Task.deleteMany({ project: id });
+        res.json({message: `Project '${project.title}' and its tasks deleted`});
     } catch (error) {
         res.status(500).json({message: "Error deleting project", error: error.message});
     }
 }
 
-module.exports = {addProject, listProjects, updateProject, deleteProject};
+module.exports = {
+    addProject,
+    listProjects,
+    getProjectWithTasks,
+    updateProject,
+    deleteProject
+};
