@@ -18,7 +18,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/projects", projectRoutes);
 
 app.get("/", (req, res) => {
-    res.send("Welcome to CollabFlow API connected to MongoDB Atlas!!!");
+    res.send("Welcome to CollabFlow API connected to MongoDB Atlas!!");
 });
 
 app.listen(port, () => {
