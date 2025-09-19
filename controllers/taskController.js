@@ -93,4 +93,10 @@ async function deleteTask(req, res) {
     }
 }
 
-module.exports = {addTask, listTasks, listTasksByProject, updateTask, deleteTask};
+module.exports = {
+    addTask,
+    listTasks,
+    listTasksByProject,
+    updateTask,
+    deleteTask
+};
