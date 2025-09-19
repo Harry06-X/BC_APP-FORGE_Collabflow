@@ -21,5 +21,5 @@ const auth = (req, res, next) => {
         return res.status(403).json({ msg: "Token is not valid"});
     }
 };
-auth();
+//auth();
 module.exports = auth;
