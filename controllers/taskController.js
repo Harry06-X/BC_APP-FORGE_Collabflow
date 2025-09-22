@@ -19,8 +19,9 @@ async function addTask(req, res) {
             project: projectId
         });
 
-        await task.save(); 
-        res.status(201).json({ message: "Task added to project", task });
+        await task.save();
+        const taskWithProject = await Task.findById(task._id).populate("project", "title");
+        res.status(201).json({ message: "Task added to project", taskWithProject });
     } catch (error) {
         res.status(500).json({ message: "Error adding task", error: error.message });
     }
@@ -54,7 +55,7 @@ async function listTasks(req, res) {
 
         //const { projectId } = req.params;
         // const tasks = await Task.find({ project: projectId });
-        const tasks = await Task.find(filter).sort(sortOptions);
+        const tasks = await Task.find(filter).sort(sortOptions).populate("project", "title");
         res.json(tasks);
     } catch (error) {
         res.status(500).json({ message: "Error fetching tasks", error: error.message });
