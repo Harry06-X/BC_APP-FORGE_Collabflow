@@ -1,4 +1,3 @@
-//const { use } = require("react");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 
