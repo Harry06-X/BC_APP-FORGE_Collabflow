@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CollabFlow Chat en temps reel</title>
+    <style>
+        :root {
+            --bg: #0b0b0b;
+            --panel: #161616;
+            --accent: #39ff14;
+            --text: #e5e5e5;
+        }
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Consolas', 'Courier New', monospace;
+            max-width: 550px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        h2 {
+            color: var(--accent);;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0;
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            background: var(--panel);
+            color: var(--text);
+            font-size: 16px;
+        }
+        input:focus { outline: none; border-color: #5aff4d; }
+
+        button {
+            background: var(--accent);
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background: #63ff45; }
+
+        #messages {
+            border: 1px solid var(--accent);
+            height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background: var(--panel);
+        }
+
+        #chatSection { display: none; }
+
+        #messages p {
+            margin: 6px 0;
+            padding: 4px 6px;
+            border-left: 3px solid var(--accent);
+            background: rgba(57,255,20,0.05);
+        }
+
+        strong {
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <h2> CollabFlow Chat</h2>
+
+    <!-- Connexion au projet -->
+    <input id="projectId" placeholder="Project ID"/>
+    <input id="username" placeholder="Votre nom"/>
+    <button id="joinBtn">Rejoindre le projet</button>
+
+    <!-- Zone de chat-->
+     <div id="chatSection">
+        <div id="messages"></div>
+        <input id="messageInput" placeholder="Tapez votre message ... (Entree pour envoyer)"/>
+        <button id="sendBtn">Envoyer</button>
+     </div>
+
+     <!-- Gerer Socket.IO -->
+      <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+      <script>
+        const socket = io("http://localhost:5000");
+
+        const joinBtn = document.getElementById("joinBtn");
+        const sendBtn = document.getElementById("sendBtn");
+        const chatSection = document.getElementById("chatSection");
+        const messagesDiv = document.getElementById("messages");
+        const messageInput = document.getElementById("messageInput");
+
+        let projectId = "";
+        let username = "";
+
+        joinBtn.addEventListener("click", () => {
+            projectId = document.getElementById("projectId").value.trim();
+            username = document.getElementById("username").value.trim();
+            if (!projectId || !username) {
+                alert("Merci de saisir un Project ID et un nom");
+                return;
+            }
+            socket.emit("joinProject", projectId);
+            chatSection.style.display = "block";
+            console.log("Join sent:", projectId);
+        });
+        sendBtn.addEventListener("click", sendMessage);
+        messageInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                sendMessage
+            }
+        });
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message)
+                return 
+            socket.emit("sendMessage", { projectId, user: username, message });
+            messageInput.value = "";
+        }
+
+        socket.on("receiveMessage", (data) => {
+            console.log("Message recu cote client: data");
+            const p = document.createElement("p");
+            const time = new Date(data.time).toLocaleTimeString();
+            p.innerHTML = `<strong>${data.user}</strong> [${time}]: ${data.message}`;
+            messagesDiv.appendChild(p);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+
+        socket.on("connect", () => console.log("Connecte au serveur:", socket.id));
+        socket.on("disconnec", () => console.log("Deconnecte"));
+      </script>
+</body>
+</html>
