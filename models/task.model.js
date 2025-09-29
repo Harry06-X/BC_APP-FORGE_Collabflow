@@ -19,7 +19,7 @@ const taskSchema = new mongoose.Schema({
     
     priority: {
         type: String,
-        eunum: ["basse", "moyenne", "haute"],
+        eunum: ["basse", "moyenne",  "haute"],
         default: "basse"
     },
     
@@ -33,7 +33,7 @@ const taskSchema = new mongoose.Schema({
         ref: "Projects",
         required: true
     }
-});
+});  
 
 const Task = mongoose.model('Tasks', taskSchema);
 
