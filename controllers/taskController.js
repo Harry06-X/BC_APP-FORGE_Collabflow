@@ -41,7 +41,7 @@ async function listTasks(req, res) {
     try {
         const { status, priority, sortBy, order, projectId } = req.query;
 
-        let filter = {};
+        const filter = {};
         if (status)
             filter.status = status;
         if (priority)
@@ -49,7 +49,7 @@ async function listTasks(req, res) {
         if (projectId)
             filter.project = projectId;
 
-        let sortOptions = {};
+        const sortOptions = {};
         if (sortBy)
             sortOptions[sortBy] = order === "desc" ? - 1 : 1;
 

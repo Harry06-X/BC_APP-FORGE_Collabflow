@@ -5,6 +5,11 @@ const dotenv = require("dotenv");
 const connectDB = require('./config/db');
 
 dotenv.config();
+
+if (!process.env.JWT_SECRET) {
+    console.error("Missing JWT_SECRET in environment (see .env.example)");
+    process.exit(1);
+}
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {

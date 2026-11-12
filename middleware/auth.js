@@ -14,10 +14,10 @@ const auth = (req, res, next) => {
     }
     
     try {
-        const decoded = jwt.verify(token, process.env.SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();
-    } catch (err) {
+    } catch {
         return res.status(403).json({ msg: "Token is not valid"});
     }
 };

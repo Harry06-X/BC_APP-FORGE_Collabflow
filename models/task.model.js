@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const taskSchema = new mongoose.Schema({
     title: {
         type: String,
-        require: true
+        required: true
     },
     
     description: {
@@ -13,19 +13,23 @@ const taskSchema = new mongoose.Schema({
     
     status: {
         type: String,
-        eunum: ["en cours", "terminer", "a faire"],
+        enum: ["en cours", "terminer", "a faire"],
         default: "en cours"
     },
     
     priority: {
         type: String,
-        eunum: ["basse", "moyenne",  "haute"],
+        enum: ["basse", "moyenne",  "haute"],
         default: "basse"
     },
     
     createdAt: {
         type: Date,
         default: Date.now
+    },
+
+    dueDate: {
+        type: Date
     },
 
     project: {
