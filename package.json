@@ -1,27 +1,46 @@
 {
   "name": "bc_app-forge_collabflow",
   "version": "1.0.0",
-  "description": "",
+  "description": "REST API + real-time chat for team project and task management (Express, MongoDB, JWT, Socket.io)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Harry06-X/BC_APP-FORGE_Collabflow.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "express",
+    "mongodb",
+    "mongoose",
+    "jwt",
+    "socket.io",
+    "rest-api",
+    "nodejs"
+  ],
+  "author": "Harry Sègnon HOUNSOU",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Harry06-X/BC_APP-FORGE_Collabflow/issues"
   },
   "homepage": "https://github.com/Harry06-X/BC_APP-FORGE_Collabflow#readme",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.24.8",
     "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "globals": "^17.14.0"
   }
 }

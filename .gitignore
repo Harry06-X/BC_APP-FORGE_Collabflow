@@ -1,1 +1,12 @@
+# Dependencies
+node_modules/
+
+# Environment (never commit secrets — use .env.example)
 .env
+.env.*
+!.env.example
+
+# Logs & OS files
+npm-debug.log*
+*.log
+.DS_Store
